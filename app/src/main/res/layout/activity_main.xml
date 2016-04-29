@@ -15,6 +15,7 @@
         android:lines="4"
         android:scrollbars="vertical|none"
         android:inputType="textMultiLine"
+        android:capitalize="sentences"
         android:id="@+id/userInput"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
