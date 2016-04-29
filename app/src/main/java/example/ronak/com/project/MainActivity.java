@@ -3,6 +3,7 @@ package example.ronak.com.project;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(lv);
 
         db = new DatabaseHandler(this);
+        userInput.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
         /* Fetch items from the database and put the items into the list view when the app opens. */
         items = new ArrayList<Items>();
@@ -96,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-
                 return false;
             }
         });
@@ -115,27 +115,34 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         //Toast.makeText(getApplicationContext(),String.valueOf(info.position),Toast.LENGTH_SHORT).show();
+        DatabaseHandler d;
+        int pos;
         switch (item.getItemId()){
 
             case R.id.update:
-                DatabaseHandler d = new DatabaseHandler(this);
-                int pos = info.position;
-                Items itemToUpdate = null;
-                for(Items i: items){
-                    if(i.getKey_id() == pos+1){
-                        itemToUpdate = i;
-                        break;
-                    }
-                }
-                d.updateItem(itemToUpdate, userInput.getText().toString());
+
+                d = new DatabaseHandler(this);
+                pos = info.position;
+                Items itemToUpdate = items.get(pos);
+                d.updateItem(itemToUpdate.getKey_id(), userInput.getText().toString());
                 array.set(info.position, userInput.getText().toString());
                 adapter.notifyDataSetChanged();
                 d.close();
+                userInput.setText("");
                 break;
 
             case R.id.delete:
 
+                d = new DatabaseHandler(this);
+                pos = info.position;
+                Items itemToDelete = items.get(pos);
+                d.deleteItem(itemToDelete.getKey_id());
+                items.remove(pos);
+                array.remove(pos);
+                adapter.notifyDataSetChanged();
+                d.close();
                 break;
+
         }
 
         return super.onContextItemSelected(item);

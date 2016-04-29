@@ -63,18 +63,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return it;
     }
 
-    void updateItem(Items item, String text){
+    void updateItem(int id, String text){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_ListItem, text);
         //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
-        int status = db.update(TABLE_LIST, values, KEY_ID+" = ?",new String[]{ String.valueOf(item.getKey_id())});
+        int status = db.update(TABLE_LIST, values, KEY_ID + " = ?", new String[]{String.valueOf(id)});
         Log.e("Status ==","Pass");
-        Cursor c = db.rawQuery("select * from "+TABLE_LIST+" where "+KEY_ListItem+" = ? ", new String[]{text});
+        Cursor c = db.rawQuery("select * from "+TABLE_LIST+" where "+KEY_ID+" = ? ", new String[]{String.valueOf(id)});
         c.moveToFirst();
-        Log.e("Updated item text==",c.getString(1));
+        Log.e("Updated item text==", c.getString(1));
         db.close();
 
+    }
+
+    void deleteItem(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //db.delete(String table, String whereClause, String[] whereArgs);
+        db.delete(TABLE_LIST, KEY_ID+" = ?", new String[]{String.valueOf(id)});
+        Log.e("Value deleted!","");
+        db.close();
     }
 
     //Getting all contacts
