@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "myDatabase";
+    private static final String DATABASE_NAME = "myDatabase.db";
     private static final String TABLE_LIST = "MyListItem";
 
     private static final String KEY_ID = "id";
@@ -30,7 +31,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String CREATE_LIST_TABLE = "CREATE TABLE " + TABLE_LIST + "(" + KEY_ID
-                + " INTEGER," + KEY_ListItem + " TEXT" + ")";
+                + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ListItem + " TEXT" + ")";
 
         sqLiteDatabase.execSQL(CREATE_LIST_TABLE);
     }
@@ -43,21 +44,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    void addListItem(List<String> listItem, String item){
+    void addListItem(String item){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-
-        /*for(int i=0; i<listItem.size(); i++){
-
-            Log.e("Value inserting==",""+listItem.get(i));
-            values.put(KEY_ListItem, listItem.get(i));
-            db.insert(TABLE_LIST, null, values);
-        }*/
         Log.e("Value inserting==", "" + item);
         values.put(KEY_ListItem, item);
         db.insert(TABLE_LIST, null, values);
         db.close();
+        db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("Select * from "+TABLE_LIST+" where "+KEY_ListItem+" = ? ", new String[]{item});
+        c.moveToFirst();
+        Log.e("Value id==", ""+c.getString(0));
+        //System.out.println(c.getString(0));
     }
+
+    /*//Getting all contacts
+    public List<String> getAllItems(){
+        List<String> list = new ArrayList<String>();
+        String query = "SELECT * FROM"+TABLE_LIST;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                Contact contact = new Contact();
+                contact.set_id(Integer.parseInt(cursor.getString(0)));
+                contact.set_name(cursor.getString(1));
+                contact.set_phone_number(cursor.getString(2));
+
+                contactList.add(contact);
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return contactList;
+    }*/
+
 
     Cursor getListItem(){
         String query = "SELECT * FROM "+TABLE_LIST;
