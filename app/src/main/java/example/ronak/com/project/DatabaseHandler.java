@@ -44,7 +44,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    void addListItem(String item){
+    Items addListItem(String item){
+        Items it = new Items();
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         Log.e("Value inserting==", "" + item);
@@ -54,41 +55,47 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db = this.getReadableDatabase();
         Cursor c = db.rawQuery("Select * from "+TABLE_LIST+" where "+KEY_ListItem+" = ? ", new String[]{item});
         c.moveToFirst();
-        Log.e("Value id==", ""+c.getString(0));
-        //System.out.println(c.getString(0));
+        Log.e("Value id==", "" + c.getString(0));
+        it.setKey_id(Integer.parseInt(c.getString(0)));
+        it.setText_data(item);
+        c.close();
+
+        return it;
     }
 
-    /*//Getting all contacts
-    public List<String> getAllItems(){
-        List<String> list = new ArrayList<String>();
-        String query = "SELECT * FROM"+TABLE_LIST;
+    void updateItem(Items item, String text){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_ListItem, text);
+        //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
+        int status = db.update(TABLE_LIST, values, KEY_ID+" = ?",new String[]{ String.valueOf(item.getKey_id())});
+        Log.e("Status ==","Pass");
+        Cursor c = db.rawQuery("select * from "+TABLE_LIST+" where "+KEY_ListItem+" = ? ", new String[]{text});
+        c.moveToFirst();
+        Log.e("Updated item text==",c.getString(1));
+        db.close();
+
+    }
+
+    //Getting all contacts
+    public List<Items> getAllItems(){
+        List<Items> itemList = new ArrayList<Items>();
+        String query = "SELECT * FROM "+TABLE_LIST;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                Contact contact = new Contact();
-                contact.set_id(Integer.parseInt(cursor.getString(0)));
-                contact.set_name(cursor.getString(1));
-                contact.set_phone_number(cursor.getString(2));
-
-                contactList.add(contact);
+                Items item = new Items();
+                item.setKey_id(Integer.parseInt(cursor.getString(0)));
+                item.setText_data(cursor.getString(1));
+                itemList.add(item);
             }while(cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
-        return contactList;
-    }*/
-
-
-    Cursor getListItem(){
-        String query = "SELECT * FROM "+TABLE_LIST;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery(query, null);
-
-        return c;
-
+        return itemList;
     }
+
 }

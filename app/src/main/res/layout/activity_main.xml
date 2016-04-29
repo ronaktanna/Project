@@ -39,4 +39,13 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/button" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retrieve in log"
+        android:id="@+id/retrieve"
+        android:layout_below="@+id/userInput"
+        android:layout_toLeftOf="@+id/button"
+        android:layout_toStartOf="@+id/button" />
+
 </RelativeLayout>

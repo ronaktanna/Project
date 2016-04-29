@@ -5,7 +5,7 @@ package example.ronak.com.project;
  */
 public class Items {
     int key_id;
-    int text_data;
+    String text_data;
 
     public int getKey_id() {
         return key_id;
@@ -15,11 +15,11 @@ public class Items {
         this.key_id = key_id;
     }
 
-    public int getText_data() {
+    public String getText_data() {
         return text_data;
     }
 
-    public void setText_data(int text_data) {
+    public void setText_data(String text_data) {
         this.text_data = text_data;
     }
 }
